@@ -274,3 +274,95 @@ signed main()
 所以，使用sum变量，在每一条链路上传递，最后复位，这是搜索算法的迁移运用；
 
 2. 前导零的处理
+```cpp
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<string>
+#include<cstring>
+#include<vector>
+#include<set>
+#include<map>
+#include<unordered_map>
+#include<unordered_set>
+#include<algorithm>
+#include<cmath>
+#include<queue>
+#include <deque>
+#include <stack>
+#include<iomanip>
+#include <chrono>
+#include<random>
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<int, int> PII;
+const int N = 200;
+#define endl '\n'
+
+int d;
+int a[N];
+int n;
+ll f[N][N];
+
+ll dfs(int pos, ll sum,bool zero,  bool limit)
+{
+    if (!zero && !limit && ~f[pos][sum])
+    {
+        return f[pos][sum];
+    }
+    if (pos == 0)
+    {
+        return sum;
+    }
+    ll ret = 0;
+    int up = limit ? a[pos] : 9;
+    for (int i = 0; i <= up; i++)
+    {
+        int t = (d == i);
+        if (zero && !i) t = 0;
+        ret += dfs(pos - 1, sum + t, zero && !i, limit && a[pos] == i);
+    }
+    if (!limit && !zero)
+    {
+        f[pos][sum] = ret;
+    }
+    return ret;
+}
+
+ll calc(ll v)
+{
+    memset(f, -1, sizeof(f));
+    int n = 0;
+    while (v)
+    {
+        a[++n] = v % 10;
+        v /= 10;
+    }
+    return dfs(n, 0, 1, 1);
+}
+
+
+void solve()
+{
+    //不要忘记清空数组；
+    //你个nt递归死路记得也要写返回；
+    ll x, y;
+    cin >> x >> y;
+    for (d = 0; d <= 9; d++)
+    {
+        cout << calc(y) - calc(x - 1) << " ";
+    }
+}
+
+signed main()
+{
+    ios::sync_with_stdio(false), cin.tie(0), cout.tie(0);
+    int TestCase = 1;
+    while (TestCase--)
+        solve();
+}
+```
+
+#### 再探digit folding:
+[[G digit folding]]

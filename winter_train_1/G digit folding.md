@@ -167,4 +167,99 @@ signed main()
 
 ## 数位dp版：
 
+数位dp更常用于解决数量：某个类型的数字出现几次（便于返回后产生记忆），或者计算数字特征出现的**次数**；
 
+对于涉及到数字本身大小特征，就不能单存采用记忆化搜索的方式，因为你的任务是==找到那个唯一的答案==，这不是靠记忆化能完成的；
+
+所以数位dp在这种类型的题目中提供一个高效搜索所有可能值的dfs框架，这类题目的最佳答案可以用贪心思想限制在某个范围，再通过string子串的加和操作快速完成答案的或者和比较，以较低的时间成本完成整个遍历；
+
+```cpp
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<string>
+#include<cstring>
+#include<vector>
+#include<set>
+#include<map>
+#include<unordered_map>
+#include<unordered_set>
+#include<algorithm>
+#include<cmath>
+#include<queue>
+#include <deque>
+#include <stack>
+#include<iomanip>
+#include <chrono>
+#include<random>
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<int, int> PII;
+const int N = 0;
+#define endl '\n'
+
+//没有返回值也别忘写return！！！！！！！！！！！！！！
+
+string L, R;
+ll ret;
+
+ll get_fold(string tmp)
+{
+    //1.去除数位dp的前导零：
+    string op = tmp;
+    int i = 0;
+    while (op[i] == '0') i++;
+    op = op.substr(i);
+    reverse(op.begin(), op.end());
+    return stoll(op);
+}
+
+
+void dfs(int pos, bool limitl, bool limitr, string tmp)
+{
+    if (pos == R.size())
+    {
+        ret = max(ret, get_fold(tmp));
+        return;
+    }
+    int up = limitr ? R[pos] - '0' : 9;
+    int down = limitl ? L[pos] - '0' : 0;
+    
+    if (!limitr && !limitl)
+    {
+        dfs(R.size(), 0, 0, tmp + string(R.size() - pos, '9'));
+    }
+    else
+    {
+        for (int i = down; i <= up; i++)
+        {
+            dfs(pos + 1, limitl && (L[pos] - '0') == i, limitr && (R[pos] - '0') == i, tmp + char('0' + i));
+        }
+    }
+    return;
+}
+
+
+void solve()
+{
+    //不要忘记清空数组；
+    //你个nt递归死路记得也要写返回；
+  
+    cin >> L >> R;
+    int lenl = L.size(); int lenr = R.size();
+    L = string(R.size() - L.size(), '0') + L;
+    ret = -1;
+    dfs(0, 1, 1, "");
+    cout << ret << endl;
+}
+
+signed main()
+{
+    ios::sync_with_stdio(false), cin.tie(0), cout.tie(0);
+    int TestCase = 1;
+    cin >> TestCase;
+    while (TestCase--)
+        solve();
+}
+```
